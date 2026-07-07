@@ -1,11 +1,11 @@
 import { Suspense } from "react";
 import { RegisterForm } from "@/components/RegisterForm";
+import { isRaffleDateReached } from "@/lib/date";
 
 export const dynamic = "force-dynamic";
 
 export default function Home() {
-  const raffleDate = process.env.RAFFLE_DATE;
-  const showWinnersLink = Boolean(raffleDate) && new Date() >= new Date(raffleDate!);
+  const showWinnersLink = isRaffleDateReached(process.env.RAFFLE_DATE);
 
   return (
     <main className="flex min-h-screen items-center justify-center px-6 py-16">

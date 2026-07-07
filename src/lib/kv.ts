@@ -2,6 +2,8 @@ import { kv } from "@vercel/kv";
 import { RaffleResult } from "./types";
 
 const RAFFLE_RESULT_KEY = "prisma:raffle:result";
+const RAFFLE_LOCK_KEY = "prisma:raffle:lock";
+const LOCK_TTL_SECONDS = 300;
 
 const kvConfigured = Boolean(
   process.env.KV_REST_API_URL && process.env.KV_REST_API_TOKEN
@@ -12,6 +14,14 @@ const kvConfigured = Boolean(
 // required in production (see checklist: "Habilitar Vercel KV").
 const memoryStore = new Map<string, unknown>();
 const memoryExpiry = new Map<string, number>();
+
+if (!kvConfigured && process.env.VERCEL) {
+  console.warn(
+    "[prisma] KV_REST_API_URL/KV_REST_API_TOKEN are not set on Vercel — " +
+      "raffle results and rate limiting will not persist across invocations. " +
+      "Connect Vercel KV before running the raffle for real."
+  );
+}
 
 export async function getRaffleResult(): Promise<RaffleResult | null> {
   if (kvConfigured) {
@@ -27,6 +37,34 @@ export async function setRaffleResult(result: RaffleResult): Promise<void> {
     return;
   }
   memoryStore.set(RAFFLE_RESULT_KEY, result);
+}
+
+// Atomic claim so two concurrent raffle runs can't both pass the
+// "already run" check before either persists a result.
+export async function claimRaffleLock(): Promise<boolean> {
+  if (kvConfigured) {
+    const result = await kv.set(RAFFLE_LOCK_KEY, "1", {
+      nx: true,
+      ex: LOCK_TTL_SECONDS,
+    });
+    return result !== null;
+  }
+
+  const now = Date.now();
+  const expiry = memoryExpiry.get(RAFFLE_LOCK_KEY);
+  if (expiry && expiry > now) return false;
+  memoryStore.set(RAFFLE_LOCK_KEY, "1");
+  memoryExpiry.set(RAFFLE_LOCK_KEY, now + LOCK_TTL_SECONDS * 1000);
+  return true;
+}
+
+export async function releaseRaffleLock(): Promise<void> {
+  if (kvConfigured) {
+    await kv.del(RAFFLE_LOCK_KEY);
+    return;
+  }
+  memoryStore.delete(RAFFLE_LOCK_KEY);
+  memoryExpiry.delete(RAFFLE_LOCK_KEY);
 }
 
 const RATE_LIMIT_MAX = 3;

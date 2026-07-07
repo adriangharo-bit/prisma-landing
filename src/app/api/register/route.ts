@@ -4,6 +4,7 @@ import {
   buildRegistrationNote,
   createCustomer,
   findCustomerByEmail,
+  hasTag,
 } from "@/lib/shopify";
 import { sendConfirmationEmail } from "@/lib/email";
 import { checkRateLimit } from "@/lib/kv";
@@ -11,17 +12,21 @@ import { isValidCode, isValidEmail, normalizeCode } from "@/lib/validation";
 
 export const dynamic = "force-dynamic";
 
-function getClientIp(request: NextRequest): string {
+function getClientIp(request: NextRequest): string | null {
   const forwardedFor = request.headers.get("x-forwarded-for");
-  return forwardedFor?.split(",")[0]?.trim() || "unknown";
+  if (forwardedFor) return forwardedFor.split(",")[0].trim();
+  const realIp = request.headers.get("x-real-ip");
+  return realIp?.trim() || null;
 }
 
 export async function POST(request: NextRequest) {
   try {
     const ip = getClientIp(request);
-    const allowed = await checkRateLimit(ip);
-    if (!allowed) {
-      return NextResponse.json({ error: "rate_limited" }, { status: 429 });
+    if (ip) {
+      const allowed = await checkRateLimit(ip);
+      if (!allowed) {
+        return NextResponse.json({ error: "rate_limited" }, { status: 429 });
+      }
     }
 
     const body = await request.json().catch(() => null);
@@ -45,10 +50,7 @@ export async function POST(request: NextRequest) {
     const existing = await findCustomerByEmail(email);
 
     if (existing) {
-      const tags = (existing.tags ?? "")
-        .split(",")
-        .map((t) => t.trim());
-      if (tags.includes("prisma-sorteo")) {
+      if (hasTag(existing.tags ?? "", "prisma-sorteo")) {
         return NextResponse.json(
           { error: "already_registered" },
           { status: 409 }
