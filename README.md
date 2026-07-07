@@ -1,36 +1,70 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# PRISMA — Registro + Sorteo
 
-## Getting Started
+App de registro para el sorteo del zapato PRISMA (Acopa Outdoors). Next.js 14 (App Router) + TypeScript + Tailwind CSS. Shopify es el almacenamiento (no hay base de datos propia); Vercel KV persiste el resultado del sorteo.
 
-First, run the development server:
+## Setup
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+### 1. Variables de entorno
+
+Copia `.env.local.example` a `.env.local` y rellena los valores:
+
+```
+cp .env.local.example .env.local
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 2. Private App en Shopify
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+1. Shopify Admin → **Settings → Apps and sales channels → Develop apps**
+2. Crear app "PRISMA Sorteo"
+3. Admin API scopes: habilitar `write_customers` y `read_customers`
+4. Instalar la app → copiar el **Admin API access token** → `SHOPIFY_ADMIN_TOKEN`
+5. `SHOPIFY_STORE` es el dominio `.myshopify.com` de la tienda
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### 3. Resend (emails transaccionales)
 
-## Learn More
+1. Crear cuenta en [resend.com](https://resend.com)
+2. Verificar el dominio `acopaoutdoors.com` (o el subdominio que uses para `FROM_EMAIL`)
+3. Generar un API key → `RESEND_API_KEY`
 
-To learn more about Next.js, take a look at the following resources:
+### 4. Vercel KV
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+1. En el proyecto de Vercel: **Storage → Create Database → KV** (o conectar una integración de Redis desde el Marketplace)
+2. Al conectar el store al proyecto, Vercel inyecta `KV_REST_API_URL` y `KV_REST_API_TOKEN` automáticamente
+3. En desarrollo local sin KV configurado, el proyecto usa un fallback en memoria (no persiste entre reinicios — solo para probar el flujo, no usar así en producción)
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### 5. Desarrollo local
 
-## Deploy on Vercel
+```
+npm install
+npm run dev
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Abre `http://localhost:3000`. Para probar el auto-llenado de código: `http://localhost:3000/?code=PR4X9K`.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### 6. Deploy
+
+```
+vercel deploy
+```
+
+Configura el dominio `prisma.acopaoutdoors.com` en el proyecto de Vercel y agrega ahí las mismas variables de entorno de `.env.local`.
+
+## Rutas
+
+| Ruta | Descripción |
+|---|---|
+| `/` | Formulario de registro público |
+| `/ganadores` | Página pública de ganadores (countdown antes del sorteo) |
+| `/admin` | Panel protegido por contraseña para ejecutar el sorteo |
+| `/api/register` | POST — valida código + crea/actualiza cliente en Shopify + email de confirmación |
+| `/api/raffle` | POST (admin) — ejecuta el sorteo |
+| `/api/winners` | GET (público) — estado y ganadores |
+| `/api/admin/login` | POST — valida `ADMIN_PASSWORD` |
+| `/api/admin/status` | GET (admin) — estadísticas para el panel |
+| `/api/admin/registrants` | GET (admin) — exporta CSV de registrados |
+
+## Notas
+
+- Rate limiting en `/api/register`: máximo 3 intentos por IP por hora (vía Vercel KV).
+- El sorteo puede forzarse antes de `RAFFLE_DATE` con `POST /api/raffle?force=true` para pruebas.
+- Los ganadores quedan tageados en Shopify como `prisma-ganador`, además del tag `prisma-sorteo` de todos los registrados.
