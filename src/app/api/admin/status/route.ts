@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { isAdminAuthorized } from "@/lib/admin-auth";
 import { getAllRegistrants } from "@/lib/shopify";
 import { getRaffleResult } from "@/lib/kv";
+import { isRaffleDateReached } from "@/lib/date";
 
 export const dynamic = "force-dynamic";
 
@@ -17,7 +18,7 @@ export async function GET(request: NextRequest) {
       getRaffleResult(),
     ]);
 
-    const status = result ? "done" : new Date() >= new Date(raffleDate) ? "ready" : "waiting";
+    const status = result ? "done" : isRaffleDateReached(raffleDate) ? "ready" : "waiting";
 
     return NextResponse.json({
       count: registrants.length,

@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { getRaffleResult } from "@/lib/kv";
+import { isRaffleDateReached } from "@/lib/date";
 
 export const dynamic = "force-dynamic";
 
@@ -7,7 +8,7 @@ export async function GET() {
   try {
     const raffleDate = process.env.RAFFLE_DATE ?? "";
 
-    if (raffleDate && new Date() < new Date(raffleDate)) {
+    if (!isRaffleDateReached(raffleDate)) {
       return NextResponse.json({ status: "pending", raffle_date: raffleDate });
     }
 

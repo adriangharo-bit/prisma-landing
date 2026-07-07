@@ -72,13 +72,27 @@ export async function createCustomer(params: {
   return data.customer;
 }
 
-function mergeTags(existingTags: string, newTag: string): string {
-  const tags = existingTags
+export function parseTags(tagsString: string): string[] {
+  return tagsString
     .split(",")
     .map((t) => t.trim())
     .filter(Boolean);
+}
+
+export function hasTag(tagsString: string, tag: string): boolean {
+  return parseTags(tagsString).includes(tag);
+}
+
+function mergeTags(existingTags: string, newTag: string): string {
+  const tags = parseTags(existingTags);
   if (!tags.includes(newTag)) tags.push(newTag);
   return tags.join(", ");
+}
+
+function mergeNote(existingNote: string | null, newNote: string): string {
+  if (!existingNote) return newNote;
+  if (existingNote.includes(newNote)) return existingNote;
+  return `${existingNote}\n${newNote}`;
 }
 
 export async function addTagToCustomer(
@@ -93,7 +107,7 @@ export async function addTagToCustomer(
       customer: {
         id: customer.id,
         tags: mergeTags(customer.tags ?? "", newTag),
-        ...(note ? { note } : {}),
+        ...(note ? { note: mergeNote(customer.note, note) } : {}),
       },
     }),
   });
@@ -109,7 +123,9 @@ export async function addTagToCustomer(
 
 export async function getAllRegistrants(): Promise<ShopifyCustomer[]> {
   const customers: ShopifyCustomer[] = [];
-  let url: string | undefined = `${baseUrl()}/customers.json?tag=prisma-sorteo&limit=250`;
+  let url: string | undefined = `${baseUrl()}/customers/search.json?query=${encodeURIComponent(
+    "tag:prisma-sorteo"
+  )}&limit=250&fields=id,email,tags,first_name,note,created_at`;
 
   while (url) {
     const res: Response = await fetch(url, { headers: headers() });
@@ -124,10 +140,5 @@ export async function getAllRegistrants(): Promise<ShopifyCustomer[]> {
     url = nextUrl;
   }
 
-  return customers.filter((c) =>
-    (c.tags ?? "")
-      .split(",")
-      .map((t) => t.trim())
-      .includes("prisma-sorteo")
-  );
+  return customers.filter((c) => hasTag(c.tags ?? "", "prisma-sorteo"));
 }
