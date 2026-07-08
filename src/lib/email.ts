@@ -7,13 +7,15 @@ function getResend(): Resend {
   return new Resend(apiKey);
 }
 
+const LOGO_URL = "https://prisma.acopaoutdoors.com/prisma-logo-black.png";
+
 function emailLayout(bodyHtml: string, footerDomain: string): string {
   return `
-  <div style="font-family: Arial, Helvetica, sans-serif; background:#0A0A0A; padding:32px 16px;">
-    <div style="max-width:480px; margin:0 auto; background:#141414; border:1px solid #262626; border-radius:12px; padding:32px; color:#F5F5F5;">
-      <p style="font-size:20px; font-weight:700; letter-spacing:0.02em; margin:0 0 24px;">PRISMA<span style="color:#FF5A1F;">.</span></p>
+  <div style="font-family: Arial, Helvetica, sans-serif; background:#F0F0F0; padding:32px 16px;">
+    <div style="max-width:480px; margin:0 auto; background:#FFFFFF; border:1px solid #E5E5E5; border-radius:12px; padding:32px; color:#0A0A0A;">
+      <img src="${LOGO_URL}" alt="PRISMA" width="140" style="display:block; height:auto; margin:0 0 24px;" />
       ${bodyHtml}
-      <hr style="border:none; border-top:1px solid #262626; margin:32px 0 16px;" />
+      <hr style="border:none; border-top:1px solid #E5E5E5; margin:32px 0 16px;" />
       <p style="font-size:12px; color:#8a8a8a; margin:0;">${footerDomain}</p>
     </div>
   </div>`;
@@ -35,12 +37,9 @@ export function confirmationEmailHtml(params: {
       El ganador se anuncia el ${formattedDate}.<br />
       Te avisamos si eres tú.
     </p>
-    <p style="font-size:16px; margin:0 0 16px;">
-      Mientras tanto, síguenos en @acopaoutdoors para ver más del PRISMA.
-    </p>
     <p style="font-size:16px; margin:0;">— El equipo de Acopa</p>
   `;
-  return emailLayout(body, "prisma.acopaoutdoors.com");
+  return emailLayout(body, "mx.acopaoutdoors.com");
 }
 
 export function winnerEmailHtml(params: { name: string; code: string }): string {

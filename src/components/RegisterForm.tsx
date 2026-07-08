@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 
 type Status = "idle" | "loading" | "success" | "error";
@@ -15,17 +14,18 @@ const ERROR_MESSAGES: Record<string, string> = {
   server_error: "Algo salió mal. Intenta de nuevo.",
 };
 
-export function RegisterForm({ showWinnersLink }: { showWinnersLink: boolean }) {
-  const searchParams = useSearchParams();
-  const codeFromUrl = searchParams.get("code") ?? "";
-
+export function RegisterForm({
+  showWinnersLink,
+  assignedCode,
+}: {
+  showWinnersLink: boolean;
+  assignedCode: string;
+}) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
-  const [code, setCode] = useState(codeFromUrl);
+  const [code] = useState(assignedCode);
   const [status, setStatus] = useState<Status>("idle");
   const [errorMessage, setErrorMessage] = useState("");
-
-  const codeLocked = codeFromUrl.length > 0;
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -85,20 +85,13 @@ export function RegisterForm({ showWinnersLink }: { showWinnersLink: boolean }) 
         <div className="relative">
           <input
             type="text"
-            placeholder="Código del poster"
-            required
-            readOnly={codeLocked}
+            readOnly
             value={code}
-            onChange={(e) => setCode(e.target.value)}
-            className={`w-full rounded-md border border-border bg-surface px-4 py-3 text-foreground placeholder:text-neutral-500 focus:outline-none focus:ring-2 focus:ring-accent ${
-              codeLocked ? "pr-10 text-neutral-400" : ""
-            }`}
+            className="w-full rounded-md border border-border bg-surface px-4 py-3 pr-10 text-neutral-400 focus:outline-none"
           />
-          {codeLocked && (
-            <span className="absolute right-3 top-1/2 -translate-y-1/2 text-accent">
-              ✓
-            </span>
-          )}
+          <span className="absolute right-3 top-1/2 -translate-y-1/2 text-accent">
+            ✓
+          </span>
         </div>
 
         {status === "error" && (
@@ -112,6 +105,10 @@ export function RegisterForm({ showWinnersLink }: { showWinnersLink: boolean }) 
         >
           {status === "loading" ? "Enviando..." : "Registrarme en el sorteo"}
         </button>
+
+        <p className="text-center text-neutral-300">
+          Nos pondremos en contacto por correo electrónico con los ganadores.
+        </p>
 
         <p className="text-center text-xs text-neutral-500">
           Al registrarte aceptas los términos del sorteo y recibir
