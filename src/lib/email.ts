@@ -81,12 +81,15 @@ export async function sendConfirmationEmail(params: {
     throw new Error("FROM_EMAIL or RAFFLE_DATE is not configured");
   }
 
-  await resend.emails.send({
+  const { error } = await resend.emails.send({
     from: fromEmail,
     to: params.email,
     subject: "Ya estás en el sorteo PRISMA.",
     html: confirmationEmailHtml({ name: params.name, raffleDate }),
   });
+  if (error) {
+    throw new Error(`Resend error (${error.name}): ${error.message}`);
+  }
 }
 
 export async function sendWinnerEmail(params: {
@@ -98,10 +101,13 @@ export async function sendWinnerEmail(params: {
   const fromEmail = process.env.FROM_EMAIL;
   if (!fromEmail) throw new Error("FROM_EMAIL is not configured");
 
-  await resend.emails.send({
+  const { error } = await resend.emails.send({
     from: fromEmail,
     to: params.email,
     subject: "Ganaste el PRISMA.",
     html: winnerEmailHtml({ name: params.name, code: params.code }),
   });
+  if (error) {
+    throw new Error(`Resend error (${error.name}): ${error.message}`);
+  }
 }
