@@ -61,13 +61,15 @@ export async function POST(request: NextRequest) {
       await createCustomer({ name, email, code });
     }
 
+    let emailSent = true;
     try {
       await sendConfirmationEmail({ name, email });
     } catch (emailError) {
+      emailSent = false;
       console.error("Failed to send confirmation email:", emailError);
     }
 
-    return NextResponse.json({ success: true }, { status: 200 });
+    return NextResponse.json({ success: true, email_sent: emailSent }, { status: 200 });
   } catch (error) {
     console.error("register error:", error);
     return NextResponse.json({ error: "server_error" }, { status: 500 });

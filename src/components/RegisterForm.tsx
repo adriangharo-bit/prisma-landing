@@ -26,6 +26,7 @@ export function RegisterForm({
   const [code] = useState(assignedCode);
   const [status, setStatus] = useState<Status>("idle");
   const [errorMessage, setErrorMessage] = useState("");
+  const [emailSent, setEmailSent] = useState(true);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -41,6 +42,7 @@ export function RegisterForm({
       const data = await res.json().catch(() => ({}));
 
       if (res.ok) {
+        setEmailSent(data?.email_sent !== false);
         setStatus("success");
         return;
       }
@@ -56,9 +58,19 @@ export function RegisterForm({
   if (status === "success") {
     return (
       <div className="text-center">
-        <p className="text-lg">
-          ¡Ya estás dentro! Revisa tu email para confirmar.
-        </p>
+        {emailSent ? (
+          <p className="text-lg">
+            ¡Ya estás dentro! Revisa tu email para confirmar.
+          </p>
+        ) : (
+          <>
+            <p className="text-lg">¡Ya estás dentro!</p>
+            <p className="mt-2 text-sm text-red-400">
+              No pudimos enviarte el email de confirmación. Guarda tu código:{" "}
+              <span className="font-semibold">{code}</span>
+            </p>
+          </>
+        )}
       </div>
     );
   }

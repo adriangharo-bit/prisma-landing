@@ -56,11 +56,12 @@ export async function POST(request: NextRequest) {
           email: customer.email,
           email_masked: maskEmail(customer.email),
           code: extractCodeFromNote(customer.note),
+          email_sent: false,
         });
       }
 
-      await setRaffleResult({ winners, run_at: new Date().toISOString() });
-
+      // Send before persisting so the stored result reflects actual
+      // delivery status instead of always claiming success.
       for (const winner of winners) {
         try {
           await sendWinnerEmail({
@@ -68,13 +69,22 @@ export async function POST(request: NextRequest) {
             email: winner.email,
             code: winner.code,
           });
+          winner.email_sent = true;
         } catch (emailError) {
           console.error("Failed to send winner email:", emailError);
         }
       }
 
+      await setRaffleResult({ winners, run_at: new Date().toISOString() });
+
       return NextResponse.json(
-        { winners: winners.map((w) => ({ name: w.name, email_masked: w.email_masked })) },
+        {
+          winners: winners.map((w) => ({
+            name: w.name,
+            email_masked: w.email_masked,
+            email_sent: w.email_sent,
+          })),
+        },
         { status: 200 }
       );
     } catch (innerError) {

@@ -25,7 +25,11 @@ export async function GET(request: NextRequest) {
       raffle_date: raffleDate,
       status,
       winners: result
-        ? result.winners.map((w) => ({ name: w.name, email_masked: w.email_masked }))
+        ? result.winners.map((w) => ({
+            name: w.name,
+            email_masked: w.email_masked,
+            email_sent: w.email_sent,
+          }))
         : [],
     });
   } catch (error) {

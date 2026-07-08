@@ -7,7 +7,7 @@ interface AdminStatus {
   count: number;
   raffle_date: string;
   status: "waiting" | "ready" | "done";
-  winners: { name: string; email_masked: string }[];
+  winners: { name: string; email_masked: string; email_sent: boolean }[];
 }
 
 const STATUS_LABELS: Record<AdminStatus["status"], string> = {
@@ -184,6 +184,11 @@ export default function AdminPage() {
               >
                 <p className="font-semibold">{w.name}</p>
                 <p className="text-sm text-neutral-400">{w.email_masked}</p>
+                {!w.email_sent && (
+                  <p className="mt-1 text-sm font-semibold text-red-400">
+                    ⚠️ No se pudo enviar el email — contactar manualmente
+                  </p>
+                )}
               </div>
             ))}
           </div>

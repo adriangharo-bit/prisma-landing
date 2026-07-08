@@ -13,6 +13,7 @@ export interface WinnerRecord {
   email: string;
   email_masked: string;
   code: string;
+  email_sent: boolean;
 }
 
 export interface RaffleResult {
