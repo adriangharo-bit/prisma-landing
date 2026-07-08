@@ -56,7 +56,7 @@ export default function Home() {
 
           <Link
             href="/modelo"
-            className="mt-4 block w-full rounded-md border border-border px-4 py-3 text-center font-semibold uppercase tracking-wide text-foreground transition hover:border-accent hover:text-accent"
+            className="mt-4 block w-full rounded-md border border-accent px-4 py-3 text-center font-semibold uppercase tracking-wide text-accent transition hover:border-foreground hover:text-foreground"
           >
             Explorar el PRISMA
           </Link>
