@@ -37,6 +37,14 @@ export function confirmationEmailHtml(params: {
       El ganador se anuncia el ${formattedDate}.<br />
       Te avisamos si eres tú.
     </p>
+    <p style="font-size:16px; margin:0 0 24px;">
+      Mientras esperas al sorteo, puedes conocer más sobre el zapato aquí.
+    </p>
+    <p style="margin:0 0 16px;">
+      <a href="https://prisma.acopaoutdoors.com/modelo" style="display:inline-block; background:#FF5A1F; color:#0A0A0A; font-weight:600; text-transform:uppercase; letter-spacing:0.05em; text-decoration:none; padding:12px 24px; border-radius:6px;">
+        Conocer el PRISMA
+      </a>
+    </p>
     <p style="font-size:16px; margin:0;">— El equipo de Acopa</p>
   `;
   return emailLayout(body, "mx.acopaoutdoors.com");

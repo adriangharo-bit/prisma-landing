@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { RegisterForm } from "@/components/RegisterForm";
 import { isRaffleDateReached } from "@/lib/date";
 import { getValidCodes } from "@/lib/validation";
@@ -52,6 +53,13 @@ export default function Home() {
           </p>
 
           <RegisterForm showWinnersLink={showWinnersLink} assignedCode={assignedCode} />
+
+          <Link
+            href="/modelo"
+            className="mt-4 block w-full rounded-md border border-border px-4 py-3 text-center font-semibold uppercase tracking-wide text-foreground transition hover:border-accent hover:text-accent"
+          >
+            Explorar el PRISMA
+          </Link>
         </div>
       </main>
     </div>
