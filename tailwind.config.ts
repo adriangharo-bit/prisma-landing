@@ -18,6 +18,9 @@ const config: Config = {
           hover: "#E64A0F",
         },
       },
+      fontFamily: {
+        geist: ["var(--font-geist-sans)", "sans-serif"],
+      },
     },
   },
   plugins: [],
