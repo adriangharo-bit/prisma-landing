@@ -111,6 +111,7 @@ export async function sendWinnerEmail(params: {
   const { error } = await resend.emails.send({
     from: fromEmail,
     to: params.email,
+    replyTo: "info@acopaoutdoors.com",
     subject: "Ganaste el PRISMA.",
     html: winnerEmailHtml({ name: params.name, code: params.code }),
   });
