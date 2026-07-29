@@ -48,9 +48,8 @@ export default function Home() {
           </div>
 
           <p className="mb-10 text-center text-neutral-300">
-            El zapato más técnico que hemos construido. Regístrate y entra al
-            sorteo para ganarlo. Por: Acceso para el lanzamiento con precio
-            especial y ticket para el sorteo de diez PRISMAS.
+            Acceso para el lanzamiento con precio especial y ticket para el
+            sorteo de diez PRISMAS.
           </p>
 
           <RegisterForm showWinnersLink={showWinnersLink} assignedCode={assignedCode} />
