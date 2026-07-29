@@ -119,7 +119,7 @@ export function RegisterForm({
         </button>
 
         <p className="text-center text-neutral-300">
-          Nos pondremos en contacto por correo electrónico con los ganadores.
+          Esto también te da acceso al lanzamiento exclusivo con precio de preventa.
         </p>
 
         <p className="text-center text-xs text-neutral-500">
