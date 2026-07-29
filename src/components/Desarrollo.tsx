@@ -5,7 +5,7 @@ const DEV_ITEMS = [
   { src: '/prisma/dev-1-inspiracion.jpg', alt: 'Render de detalle del empeine de PRISMA', caption: 'Canales de flexión modelados en el empeine para acompañar cada movimiento del pie.' },
   { src: '/prisma/dev-4-empeine.jpg', alt: 'Corte láser del prototipo de empeine', caption: 'Proceso de diseño del empeine.' },
   { src: '/prisma/dev-3-talon.jpg', alt: 'Talón reforzado con compuesto CAT', caption: 'Talón en compuesto CAT μ 1.5 — tracción constante en cada apoyo de talón.' },
-  { src: '/prisma/dev-4-horma.png', alt: 'Horma técnica con estructura de soporte de impresión 3D', caption: 'Horma validada milímetro a milímetro. Punta redondeada, sin bordes filosos, para mejor soporte de los dedos.' },
+  { src: '/prisma/dev-4-horma.jpg', alt: 'Horma técnica con estructura de soporte de impresión 3D', caption: 'Horma validada milímetro a milímetro. Punta redondeada, sin bordes filosos, para mejor soporte de los dedos.' },
 ];
 
 export default function Desarrollo() {
