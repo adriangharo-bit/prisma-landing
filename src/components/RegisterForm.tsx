@@ -119,7 +119,7 @@ export function RegisterForm({
         </button>
 
         <p className="text-center text-neutral-300">
-          Esto también te da acceso al lanzamiento exclusivo con precio de preventa.
+          El zapato más técnico que hemos construido.
         </p>
 
         <p className="text-center text-xs text-neutral-500">
