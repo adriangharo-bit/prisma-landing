@@ -27,4 +27,5 @@ export type RegisterErrorCode =
   | "invalid_code"
   | "already_registered"
   | "rate_limited"
+  | "registration_closed"
   | "server_error";

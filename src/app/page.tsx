@@ -1,7 +1,9 @@
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { RegisterForm } from "@/components/RegisterForm";
 import { isRaffleDateReached } from "@/lib/date";
 import { getValidCodes } from "@/lib/validation";
+import { getRaffleResult } from "@/lib/kv";
 
 export const dynamic = "force-dynamic";
 
@@ -10,7 +12,12 @@ function assignRandomCode(): string {
   return codes[Math.floor(Math.random() * codes.length)] ?? "";
 }
 
-export default function Home() {
+export default async function Home() {
+  // Once the raffle has run, registration is closed and only winners are shown.
+  if (await getRaffleResult()) {
+    redirect("/ganadores");
+  }
+
   const showWinnersLink = isRaffleDateReached(process.env.RAFFLE_DATE);
   const assignedCode = assignRandomCode();
 

@@ -1,7 +1,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 
-export default function CTA({ href = '/' }: { href?: string }) {
+export default function CTA({ href = '/ganadores' }: { href?: string }) {
   return (
     <section
       id="sec-4"
@@ -15,13 +15,13 @@ export default function CTA({ href = '/' }: { href?: string }) {
           Los boulders dejaron de ser un problema
         </h2>
         <p className="text-[17px] leading-[1.6] text-[#a3a3a3] max-w-[520px]">
-          Cantidad limitada. PRISMA se entrega a quienes participen y ganen el sorteo oficial de lanzamiento.
+          El sorteo oficial de lanzamiento ya tiene ganadores. Gracias a todos los que participaron.
         </p>
         <Link
           href={href}
           className="inline-block bg-[#FF5A1F] hover:bg-[#E64A0F] text-[#0a0a0a] font-geist font-bold text-[15px] tracking-[0.05em] uppercase no-underline px-10 py-[18px] rounded-sm transition-all duration-[250ms] hover:-translate-y-0.5"
         >
-          Participa en el sorteo →
+          Ver ganadores →
         </Link>
         <span className="font-geist text-[11px] tracking-[0.15em] text-[#525252] uppercase">
           Acopa Outdoors · Edición de lanzamiento

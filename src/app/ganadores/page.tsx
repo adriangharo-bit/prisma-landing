@@ -95,8 +95,8 @@ export default function GanadoresPage() {
         )}
 
         <p className="mt-10">
-          <Link href="/" className="text-accent hover:underline">
-            ← Volver a registro
+          <Link href="/modelo" className="text-accent hover:underline">
+            Conocer el PRISMA →
           </Link>
         </p>
       </div>

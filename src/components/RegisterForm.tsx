@@ -11,6 +11,7 @@ const ERROR_MESSAGES: Record<string, string> = {
   invalid_email: "Ingresa un email válido.",
   missing_fields: "Completa todos los campos.",
   rate_limited: "Demasiados intentos. Intenta de nuevo en un rato.",
+  registration_closed: "El registro ya cerró. El sorteo ya tiene ganadores.",
   server_error: "Algo salió mal. Intenta de nuevo.",
 };
 

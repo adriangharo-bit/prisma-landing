@@ -7,7 +7,7 @@ import {
   hasTag,
 } from "@/lib/shopify";
 import { sendConfirmationEmail } from "@/lib/email";
-import { checkRateLimit } from "@/lib/kv";
+import { checkRateLimit, getRaffleResult } from "@/lib/kv";
 import { isValidCode, isValidEmail, normalizeCode } from "@/lib/validation";
 
 export const dynamic = "force-dynamic";
@@ -21,6 +21,10 @@ function getClientIp(request: NextRequest): string | null {
 
 export async function POST(request: NextRequest) {
   try {
+    if (await getRaffleResult()) {
+      return NextResponse.json({ error: "registration_closed" }, { status: 403 });
+    }
+
     const ip = getClientIp(request);
     if (ip) {
       const allowed = await checkRateLimit(ip);
